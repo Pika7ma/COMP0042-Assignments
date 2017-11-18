@@ -1,0 +1,240 @@
+package explorer;
+
+import java.io.File;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeoutException;
+
+import net.contentobjects.jnotify.JNotify;
+import net.contentobjects.jnotify.JNotifyException;
+
+public class FileExplorer {
+	public static Connection conn;
+	public static PreparedStatement ps;
+	public static final String insert = "insert into realTimeFileSystem values(?, ?, ?, ?, ?, ?)";
+	public static final String delete = "delete from realTimeFileSystem where ID = ?";
+	public static final String enter = "select ID from realTimeFileSystem where preID = ? and name = ?;";
+	public static final String find = "select ID from realTimeFileSystem where preID = ?;";
+	public static final String getPreID = "select preID from realTimeFileSystem where ID = ?;";
+	public static String rootDir;
+	public static File rootFile;
+	public static long totalID = 0;
+	
+	
+	public static void insertFile(File file, long preID, long ID) throws SQLException {
+		ps = conn.prepareStatement(insert);
+		ps.setLong(1, preID);
+		ps.setLong(2, ID);
+		ps.setString(3, file.getName().replace('\'', ' '));
+		ps.setLong(4, file.length());
+		ps.setTimestamp(5, new Timestamp(file.lastModified()));
+		ps.setString(6, getType(file));
+//		System.out.println(preID);
+//		System.out.println(ID);
+//		System.out.println(file.getName().replace('\'', ' '));
+//		System.out.println(SizeConverter.B.convert(file.length()));
+//		System.out.println(new Timestamp(file.lastModified()));
+//		System.out.println(getType(file));
+		ps.executeUpdate();
+	}
+	
+	public static void insertDir(File file, long preID, long ID) throws SQLException, InterruptedException, ExecutionException, TimeoutException {
+		ps = conn.prepareStatement(insert);
+		ps.setLong(1, preID);
+		ps.setLong(2, ID);
+		ps.setString(3, file.getName().replace('\'', ' '));
+		ps.setLong(4, ConcurrentTotalFileSize.totalSize(file));
+		ps.setTimestamp(5, new Timestamp(file.lastModified()));
+		ps.setNull(6, java.sql.Types.NULL);
+//		System.out.println(preID);
+//		System.out.println(ID);
+//		System.out.println(file.getName().replace('\'', ' '));
+//		System.out.println(ConcurrentTotalFileSize.totalSize(file));
+//		System.out.println(new Timestamp(file.lastModified()));
+		ps.executeUpdate();
+	}
+	
+	public static void modify(File oldFile, File newFile) throws SQLException, InterruptedException, ExecutionException, TimeoutException {
+		long ID = getID(oldFile);
+		long preID = 0;
+		ResultSet rs = null;
+		ps = conn.prepareStatement(getPreID);
+		ps.setLong(1, ID);
+		rs = ps.executeQuery();
+		if (rs.first()) {
+			preID = rs.getLong(1);
+		}
+		deleteFile(ID);
+		if (newFile.isDirectory()) {
+			insertDir(newFile, preID, ID);
+		}
+		else {
+			insertFile(newFile, preID, ID);
+		}
+	}
+	
+	public static void deleteDir(long ID) throws SQLException {
+		System.out.println(ID);
+		ResultSet rs = null;
+		ps = conn.prepareStatement(find);
+		ps.setLong(1, ID);
+		rs = ps.executeQuery();
+		int i = 0;
+		while (rs.next()) {
+			System.out.println(ID + " " + (++i));
+			deleteDir(rs.getLong(1));
+		}
+		deleteFile(ID);
+	}
+	
+	public static void deleteFile(File file) throws SQLException {
+		ps = conn.prepareStatement(delete);
+		ps.setLong(1, getID(file));
+		ps.executeUpdate();
+	}
+	
+	public static void deleteFile(long ID) throws SQLException {
+		ps = conn.prepareStatement(delete);
+		ps.setLong(1, ID);
+		ps.executeUpdate();
+	}
+	
+	private static void initExplorer(File file, long preID) throws TimeoutException, SQLException, InterruptedException, ExecutionException {
+		if (file.exists()) {
+			long nowID = totalID++;
+			if (file.isFile()) {
+				insertFile(file, preID, nowID);
+				return;
+			}
+			insertDir(file, preID, nowID);
+			File[] files = file.listFiles();
+			if (files != null) {
+				for (File theFile : files) {
+					initExplorer(theFile, nowID);
+				}
+			}
+		}
+	}
+	
+	public static String getType(File theFile) {
+		String s[] = theFile.getName().replace('\'', ' ').split("\\.");
+		if (s.length > 1) {
+			if (s[s.length - 1] != null && !s[s.length - 1].equals("")) {
+				return s[s.length - 1];
+			}
+		}
+		return "";
+	}
+	
+	public static long getID(File file) throws SQLException {
+		ResultSet rs = null;
+		ArrayList<File> preFolders = new ArrayList<>();
+		for (File theFile = new File(file.getAbsolutePath()); !rootDir.equals(theFile.getAbsolutePath()); theFile = theFile.getParentFile()) {
+			preFolders.add(theFile);
+		}
+		Collections.reverse(preFolders);
+		long nowID = 0;
+		for (File theFile : preFolders) {
+			ps = conn.prepareStatement(enter);
+			ps.setLong(1, nowID);
+			ps.setString(2, theFile.getName().replace('\'', ' '));
+			rs = ps.executeQuery();
+			if (rs.first()) {
+				nowID = rs.getLong(1);
+			}
+			else {
+				return -1;
+			}
+		}
+		return nowID;
+	}
+	
+	public static void clearDatabase() {
+		try {
+			ps.executeUpdate("drop table if exists realTimeFileSystem;");
+			ps.executeUpdate("create table if not exists realTimeFileSystem " +
+				"(preID bigint, " +
+				"ID bigint, " +
+				"name varchar(1000), " +
+				"size bigint, " +
+				"time timestamp, " +
+				"type varchar(25), " +
+				"primary key(ID) " +
+				");");
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	public static void setRootFile(File file) {
+		rootFile = file;
+		rootDir = rootFile.getAbsolutePath();
+	}
+	
+	public static void work(File file) throws SQLException, TimeoutException, InterruptedException, ExecutionException {
+		
+		setRootFile(file);
+		try {
+			Class.forName("com.mysql.jdbc.Driver");
+		} catch (ClassNotFoundException e1) {
+			System.out.println("Fail to find MySQL driver");
+			e1.printStackTrace();
+		}
+		
+		// connect to the database
+		String url = "jdbc:mysql://localhost:3306/file?useUnicode=true&characterEncoding=utf-8&useSSL=false";
+		conn = DriverManager.getConnection(url, "root", "naive");
+		ps = conn.prepareStatement("");
+		
+		
+		clearDatabase();
+		
+		// initial the database with existed files and folders
+		initExplorer(rootFile, totalID);
+		
+		try {
+			startMonitor();
+		} catch (JNotifyException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	public static void startMonitor() throws InterruptedException, JNotifyException {
+		// watch mask, specify events you care about,
+		// or JNotify.FILE_ANY for all events.
+		int mask = JNotify.FILE_ANY;
+
+		// watch subtree?
+		boolean watchSubtree = true;
+
+		// add actual watch
+		int watchID = JNotify.addWatch(rootDir, mask, watchSubtree, new Listener());
+
+		// sleep a little, the application will exit if you
+		// don't (watching is asynchronous), depending on your
+		// application, this may not be required
+		
+		Thread.sleep(100000000);
+		
+		// to remove watch the watch
+		boolean res = JNotify.removeWatch(watchID);
+		if (!res) {
+			// invalid watch ID specified.
+		}
+	}
+
+	public static void main(String[] args) throws Exception {
+
+		// TODO Auto-generated method stub
+		work(new File("C:\\Users\\Pika Ma\\Desktop\\Test"));
+	}
+}

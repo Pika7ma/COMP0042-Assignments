@@ -1,0 +1,109 @@
+package explorer;
+
+import java.awt.EventQueue;
+
+import javax.swing.JFrame;
+import javax.swing.JMenuBar;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import java.awt.Font;
+import javax.swing.JRadioButtonMenuItem;
+import javax.swing.ButtonGroup;
+
+public class UI {
+
+	private JFrame frame;
+	private final ButtonGroup buttonGroup = new ButtonGroup();
+
+	/**
+	 * Launch the application.
+	 */
+	public static void main(String[] args) {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					UI window = new UI();
+					window.frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+
+	/**
+	 * Create the application.
+	 */
+	public UI() {
+		initialize();
+	}
+
+	/**
+	 * Initialize the contents of the frame.
+	 */
+	private void initialize() {
+		frame = new JFrame();
+		frame.setBounds(100, 100, 721, 428);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		
+		JMenuBar menuBar = new JMenuBar();
+		frame.setJMenuBar(menuBar);
+		
+		JMenu mnNew = new JMenu("New");
+		mnNew.setFont(new Font("Arial", Font.PLAIN, 12));
+		menuBar.add(mnNew);
+		
+		JMenuItem mntmNewFolder = new JMenuItem("New Folder");
+		mntmNewFolder.setFont(new Font("Arial", Font.PLAIN, 12));
+		mnNew.add(mntmNewFolder);
+		
+		JMenuItem mntmNewFile = new JMenuItem("New File");
+		mntmNewFile.setFont(new Font("Arial", Font.PLAIN, 12));
+		mnNew.add(mntmNewFile);
+		
+		JMenu mnView = new JMenu("View");
+		mnView.setFont(new Font("Arial", Font.PLAIN, 12));
+		menuBar.add(mnView);
+		
+		JRadioButtonMenuItem rdbtnmntmIconView = new JRadioButtonMenuItem("Icon View");
+		rdbtnmntmIconView.setFont(new Font("Arial", Font.PLAIN, 12));
+		buttonGroup.add(rdbtnmntmIconView);
+		mnView.add(rdbtnmntmIconView);
+		
+		JRadioButtonMenuItem rdbtnmntmListView = new JRadioButtonMenuItem("List View");
+		rdbtnmntmListView.setFont(new Font("Arial", Font.PLAIN, 12));
+		buttonGroup.add(rdbtnmntmListView);
+		mnView.add(rdbtnmntmListView);
+		
+		JRadioButtonMenuItem rdbtnmntmList = new JRadioButtonMenuItem("Details View");
+		rdbtnmntmList.setSelected(true);
+		rdbtnmntmList.setFont(new Font("Arial", Font.PLAIN, 12));
+		buttonGroup.add(rdbtnmntmList);
+		mnView.add(rdbtnmntmList);
+		
+		JMenuItem mntmLogFile = new JMenuItem("Log File");
+		mntmLogFile.setFont(new Font("Arial", Font.PLAIN, 12));
+		mnView.add(mntmLogFile);
+		
+		JMenu mnSearch = new JMenu("Search");
+		mnSearch.setFont(new Font("Arial", Font.PLAIN, 12));
+		menuBar.add(mnSearch);
+		
+		JMenuItem mntmSearchFile = new JMenuItem("Search File");
+		mntmSearchFile.setFont(new Font("Arial", Font.PLAIN, 12));
+		mnSearch.add(mntmSearchFile);
+		
+		JMenuItem mntmSearchFolder = new JMenuItem("Search Folder");
+		mntmSearchFolder.setFont(new Font("Arial", Font.PLAIN, 12));
+		mnSearch.add(mntmSearchFolder);
+		
+		JMenuItem mntmSearchAll = new JMenuItem("Search All");
+		mntmSearchAll.setFont(new Font("Arial", Font.PLAIN, 12));
+		mnSearch.add(mntmSearchAll);
+		
+		JMenu mnOption = new JMenu("Option");
+		mnOption.setFont(new Font("Arial", Font.PLAIN, 12));
+		menuBar.add(mnOption);
+	}
+
+}

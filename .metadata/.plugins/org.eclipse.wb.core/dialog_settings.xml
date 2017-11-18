@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section name="Workbench">
+	<section name="org.eclipse.wb.internal.core.model.property.order.ReorderDialog">
+		<item value="700" key="x"/>
+		<item value="520" key="width"/>
+		<item value="337" key="y"/>
+		<item value="366" key="height"/>
+	</section>
+	<section name="org.eclipse.wb.internal.swing.model.property.editor.models.table.TableModelDialog">
+		<item value="574" key="x"/>
+		<item value="771" key="width"/>
+		<item value="244" key="y"/>
+		<item value="551" key="height"/>
+	</section>
+	<section name="org.eclipse.wb.internal.core.editor.actions.assistant.LayoutAssistantWindow">
+		<item value="921" key="x"/>
+		<item value="469" key="y"/>
+	</section>
+	<section name="org.eclipse.wb.internal.core.nls.ui.NlsDialog">
+		<item value="210" key="x"/>
+		<item value="1500" key="width"/>
+		<item value="40" key="y"/>
+		<item value="960" key="height"/>
+	</section>
+	<section name="org.eclipse.wb.internal.core.model.property.editor.string.StringPropertyDialog">
+		<item value="695" key="x"/>
+		<item value="530" key="width"/>
+		<item value="347" key="y"/>
+		<item value="346" key="height"/>
+	</section>
+</section>

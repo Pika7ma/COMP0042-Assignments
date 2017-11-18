@@ -1,0 +1,154 @@
+package explorer;
+
+import java.awt.EventQueue;
+
+import javax.swing.JFrame;
+import javax.swing.JMenuBar;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import java.awt.Font;
+import javax.swing.JRadioButtonMenuItem;
+import javax.swing.ButtonGroup;
+import javax.swing.SwingConstants;
+import javax.swing.JTable;
+import java.awt.BorderLayout;
+import javax.swing.JTree;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.SoftBevelBorder;
+import javax.swing.border.BevelBorder;
+import javax.swing.BoxLayout;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JList;
+import javax.swing.JSeparator;
+import javax.swing.JSplitPane;
+import javax.swing.JInternalFrame;
+import javax.swing.JDesktopPane;
+import javax.swing.JTabbedPane;
+
+public class UI {
+
+	private JFrame frame;
+	private final ButtonGroup buttonGroup = new ButtonGroup();
+
+	/**
+	 * Launch the application.
+	 */
+	public static void main(String[] args) {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					UI window = new UI();
+					window.frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+
+	/**
+	 * Create the application.
+	 */
+	public UI() {
+		initialize();
+	}
+
+	/**
+	 * Initialize the contents of the frame.
+	 */
+	private void initialize() {
+		frame = new JFrame();
+		frame.setBounds(100, 100, 721, 428);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		
+		JMenuBar menuBar = new JMenuBar();
+		frame.setJMenuBar(menuBar);
+		
+		JMenu mnNew = new JMenu("New");
+		mnNew.setHorizontalAlignment(SwingConstants.LEFT);
+		mnNew.setFont(new Font("Arial", Font.PLAIN, 12));
+		menuBar.add(mnNew);
+		
+		JMenuItem mntmNewFolder = new JMenuItem("New Folder");
+		mntmNewFolder.setHorizontalAlignment(SwingConstants.LEFT);
+		mntmNewFolder.setFont(new Font("Arial", Font.PLAIN, 12));
+		mnNew.add(mntmNewFolder);
+		
+		JMenuItem mntmNewFile = new JMenuItem("New File");
+		mntmNewFile.setHorizontalAlignment(SwingConstants.LEFT);
+		mntmNewFile.setFont(new Font("Arial", Font.PLAIN, 12));
+		mnNew.add(mntmNewFile);
+		
+		JMenu mnView = new JMenu("View");
+		mnView.setHorizontalAlignment(SwingConstants.LEFT);
+		mnView.setFont(new Font("Arial", Font.PLAIN, 12));
+		menuBar.add(mnView);
+		
+		JRadioButtonMenuItem rdbtnmntmIconView = new JRadioButtonMenuItem("Icon View");
+		rdbtnmntmIconView.setHorizontalAlignment(SwingConstants.LEFT);
+		rdbtnmntmIconView.setFont(new Font("Arial", Font.PLAIN, 12));
+		buttonGroup.add(rdbtnmntmIconView);
+		mnView.add(rdbtnmntmIconView);
+		
+		JRadioButtonMenuItem rdbtnmntmListView = new JRadioButtonMenuItem("List View");
+		rdbtnmntmListView.setHorizontalAlignment(SwingConstants.LEFT);
+		rdbtnmntmListView.setFont(new Font("Arial", Font.PLAIN, 12));
+		buttonGroup.add(rdbtnmntmListView);
+		mnView.add(rdbtnmntmListView);
+		
+		JRadioButtonMenuItem rdbtnmntmDetailsView = new JRadioButtonMenuItem("Details View");
+		rdbtnmntmDetailsView.setHorizontalAlignment(SwingConstants.LEFT);
+		rdbtnmntmDetailsView.setSelected(true);
+		rdbtnmntmDetailsView.setFont(new Font("Arial", Font.PLAIN, 12));
+		buttonGroup.add(rdbtnmntmDetailsView);
+		mnView.add(rdbtnmntmDetailsView);
+		
+		JMenuItem mntmLogFile = new JMenuItem("Log File");
+		mntmLogFile.setHorizontalAlignment(SwingConstants.LEFT);
+		mntmLogFile.setFont(new Font("Arial", Font.PLAIN, 12));
+		mnView.add(mntmLogFile);
+		
+		JMenu mnSearch = new JMenu("Search");
+		mnSearch.setHorizontalAlignment(SwingConstants.LEFT);
+		mnSearch.setFont(new Font("Arial", Font.PLAIN, 12));
+		menuBar.add(mnSearch);
+		
+		JMenuItem mntmSearchFile = new JMenuItem("Search File");
+		mntmSearchFile.setHorizontalAlignment(SwingConstants.LEFT);
+		mntmSearchFile.setFont(new Font("Arial", Font.PLAIN, 12));
+		mnSearch.add(mntmSearchFile);
+		
+		JMenuItem mntmSearchFolder = new JMenuItem("Search Folder");
+		mntmSearchFolder.setHorizontalAlignment(SwingConstants.LEFT);
+		mntmSearchFolder.setFont(new Font("Arial", Font.PLAIN, 12));
+		mnSearch.add(mntmSearchFolder);
+		
+		JMenuItem mntmSearchAll = new JMenuItem("Search All");
+		mntmSearchAll.setHorizontalAlignment(SwingConstants.LEFT);
+		mntmSearchAll.setFont(new Font("Arial", Font.PLAIN, 12));
+		mnSearch.add(mntmSearchAll);
+		
+		JMenu mnOption = new JMenu("Option");
+		mnOption.setHorizontalAlignment(SwingConstants.LEFT);
+		mnOption.setFont(new Font("Arial", Font.PLAIN, 12));
+		menuBar.add(mnOption);
+		
+		JMenuItem mntmSetRootDirectory = new JMenuItem("Set Root Directory");
+		mntmSetRootDirectory.setHorizontalAlignment(SwingConstants.LEFT);
+		mntmSetRootDirectory.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+		mnOption.add(mntmSetRootDirectory);
+		
+		JSplitPane splitPane = new JSplitPane();
+		frame.getContentPane().add(splitPane, BorderLayout.CENTER);
+		
+		JSplitPane splitPane_1 = new JSplitPane();
+		splitPane_1.setOrientation(JSplitPane.VERTICAL_SPLIT);
+		splitPane.setLeftComponent(splitPane_1);
+		
+		JLabel lblNewLabel = new JLabel("New label");
+		frame.getContentPane().add(lblNewLabel, BorderLayout.SOUTH);
+	}
+
+}
